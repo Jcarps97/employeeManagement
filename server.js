@@ -184,26 +184,26 @@ function addDepartment() {
 
 function init() {
     inquirer.prompt(initQuestion)
-    .then(response => {
-        if(response.init === 'View Employees') {
+    .then(resp => {
+        if(resp.init === 'View Employees') {
             viewEmployees()
         }
-        else if(response.init === 'View Departments') {
+        else if(resp.init === 'View Departments') {
             viewDepartments()
         }
-        else if(response.init === 'View Roles') {
+        else if(resp.init === 'View Roles') {
             viewRoles()
         }
-        else if(response.init === 'Add Employee') {
+        else if(resp.init === 'Add Employee') {
             addEmployee()
         }
-        else if(response.init === 'Add Role') {
+        else if(resp.init === 'Add Role') {
             addRole()
         }
-        else if(response.init === 'Add Department') {
+        else if(resp.init === 'Add Department') {
             addDepartment()
         }
-        else if(response.init === 'Update Employee') {
+        else if(resp.init === 'Update Employee') {
             updateEmployee()
         }
 
