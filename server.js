@@ -107,23 +107,30 @@ function viewRoles() {
 init()
 }
 
+// CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+// FROM employee
+// LEFT JOIN roles ON employee.role_id = roles.id
+// LEFT JOIN departments ON roles.department_id = departments.id
+// LEFT JOIN employee manager ON manager.id = employee.manager_id
+
 function viewEmployees() {
-//NEED TO ADD CONCAT AND JOIN METHODS
+//Sequel statements currently pull manager name OR department/role name, not both.
     console.log("viewEmployees triggers")
-    let sql = `SELECT * FROM employees 
-    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-    FROM employee
+    let sql = `SELECT employees.id, employees.first_name, employees.last_name,
+    CONCAT(manager.first_name, " ", manager.last_name) AS manager
+    FROM employees
     LEFT JOIN roles ON employees.role_id = roles.id
     LEFT JOIN departments ON roles.department_id = departments.id
-    LEFT JOIN employee manager ON manager.id = employee.manager_id`;
+    LEFT JOIN employees manager ON manager.id = employees.manager_id`;
     db.query(sql, (err, rows) => {
         if(err) {
-            res.status(500).json({ error: err.message });
+            console.log(err)
+            // res.status(500).json({ error: err.message });
        return;
        }
             console.log(rows)
+            init()
        });
-init()
 }
 
 function addEmployee() {
@@ -137,6 +144,7 @@ function addEmployee() {
                 console.log("Added employee!");
                 init();
             } else {
+                console.log(err)
                 console.log("Error!");
                 init();
             }
@@ -157,6 +165,7 @@ function addRole() {
                 console.log("Added role!");
                 init();
             } else {
+                console.log(err)
                 console.log("Error!");
                 init();
             }
@@ -176,6 +185,7 @@ function addDepartment() {
                 console.log("Added department!");
                 init();
             } else {
+                console.log(err)
                 console.log("Error!");
                 init();
             }
