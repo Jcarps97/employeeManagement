@@ -8,7 +8,7 @@ const db = mysql.createConnection(
     {
       host: 'localhost',
       user: 'root',
-      password: process.env.DB_PASS, //Employ ENV later for encryption
+      password: process.env.DB_PASS,
       database: 'employees_db'
     },
     console.log(`Connected to the employees_db database.`)
@@ -37,12 +37,13 @@ const roleQuestions = [
 },
 {
     type: 'input',
-    message: 'What is the salary for this role?',
+    message: 'What is the salary for this role? (Integer value, only)',
     name: 'roleSalary'
 },
 {
-    type: 'input',
+    type: 'list',
     message: 'What department does this role belong to?',
+    choices: [`SELECT department_name FROM departments`],
     name: 'roleDept'
 }
 ]
@@ -65,7 +66,7 @@ const employeeQuestions = [
 },
 {
     type: 'input',
-    message: 'Enter respective manager or leave null if manager',
+    message: 'Enter respective manager or enter null if manager',
     name: 'empManager'
 }
 ]
@@ -107,8 +108,14 @@ init()
 }
 
 function viewEmployees() {
+//NEED TO ADD CONCAT AND JOIN METHODS
     console.log("viewEmployees triggers")
-    let sql = `SELECT * FROM employees`;
+    let sql = `SELECT * FROM employees 
+    CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+    FROM employee
+    LEFT JOIN roles ON employees.role_id = roles.id
+    LEFT JOIN departments ON roles.department_id = departments.id
+    LEFT JOIN employee manager ON manager.id = employee.manager_id`;
     db.query(sql, (err, rows) => {
         if(err) {
             res.status(500).json({ error: err.message });
@@ -120,6 +127,7 @@ init()
 }
 
 function addEmployee() {
+//ADD SELECTOR FOR PICKING ROLE INSTEAD OF ENTERING
     console.log("addEmployee triggers")
     inquirer.prompt(employeeQuestions)
     .then(resp => {
@@ -139,6 +147,7 @@ function addEmployee() {
 }
 
 function addRole() {
+//ADD SELECTOR FOR PICKING DEPARTMENT
     console.log("addRole triggers")
     inquirer.prompt(roleQuestions)
     .then(resp => {
