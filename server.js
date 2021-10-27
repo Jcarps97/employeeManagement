@@ -1,4 +1,5 @@
 //The basic stuff
+const { json } = require("express");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const dotenv = require('dotenv').config();
@@ -116,9 +117,10 @@ init()
 function viewEmployees() {
 //Sequel statements currently pull manager name OR department/role name, not both.
     console.log("viewEmployees triggers")
-    let sql = `SELECT employees.id, employees.first_name, employees.last_name,
+    let sql = `SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.department_name,
     CONCAT(manager.first_name, " ", manager.last_name) AS manager
     FROM employees
+
     LEFT JOIN roles ON employees.role_id = roles.id
     LEFT JOIN departments ON roles.department_id = departments.id
     LEFT JOIN employees manager ON manager.id = employees.manager_id`;
@@ -179,7 +181,7 @@ function addDepartment() {
     console.log("addDepartment triggers")
     inquirer.prompt(deptQuestion)
     .then(resp => {
-        db.query('INSERT INTO departments VALUES (?)', [resp.deptName],
+        db.query('INSERT INTO departments (department_name) VALUES (?)', [resp.deptName],
         function (err, result) {
             if (result){
                 console.log("Added department!");
@@ -195,11 +197,46 @@ function addDepartment() {
 //Incorporate node response values into post request
 }
 
-// function updateEmployee() {
-//     This is gonna suck
-//     Maybe attempt something similar to 'add' functions, 
-//     depends on prior functions' success
-// }
+function updateEmployee() {
+    let sql1 = `SELECT employees.first_name, employees.last_name FROM employees`
+    db.query(sql1, (err, rows) => {
+        // console.log(rows)
+        rows = rows.map( function(employee) {
+            return employee.first_name + " " + employee.last_name
+        })
+        // console.log(rows)
+        employeeUpdate =
+        {
+            type: 'list',
+            message: 'Which employee would you like to update?',
+            choices: rows,
+            name: 'updateEmployee'
+        }
+        // console.log(rows)
+        inquirer.prompt(employeeUpdate)
+    return employeeUpdate
+    })
+
+    let sql2 = `SELECT roles.title FROM roles`
+    db.query(sql2, (err, rows) => {
+        rows = rows.map( function(role) {
+            return role.title
+        })
+        roleUpdate = 
+        {
+            type: 'list',
+            message: 'Which role would you like to select?',
+            choices: rows,
+            name: 'updateRole'   
+        }
+        inquirer.prompt(roleUpdate)
+    return roleUpdate
+    })
+
+//Last step of update not quite functional
+// let sql3 = `UPDATE employees SET employees.role_id = ? WHERE employee.id = ?`
+// db.query(`UPDATE employees SET employees.role_id = ? WHERE employee.id = ?`, [roleUpdate, employeeUpdate] )
+}
 
 function init() {
     inquirer.prompt(initQuestion)
