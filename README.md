@@ -6,7 +6,7 @@ Create a database of employees that lists their first name, last name, which rol
 
 
 Video: 
-
+[Watch my demonstration!](https://watch.screencastify.com/v/vbrN9K0IKDbyNdzOJgKU)
 
 
 

@@ -42,9 +42,8 @@ const roleQuestions = [
     name: 'roleSalary'
 },
 {
-    type: 'list',
-    message: 'What department does this role belong to?',
-    choices: [`SELECT department_name FROM departments`],
+    type: 'input',
+    message: 'Enter ID value for department',
     name: 'roleDept'
 }
 ]
@@ -140,7 +139,7 @@ function addEmployee() {
     console.log("addEmployee triggers")
     inquirer.prompt(employeeQuestions)
     .then(resp => {
-        db.query('INSERT INTO employees VALUES (?, ?, ?, ?)', [resp.firstName, resp.lastName, resp.empRole, resp.empManager],
+        db.query('INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [resp.firstName, resp.lastName, resp.empRole, resp.empManager],
         function (err, result) {
             if (result){
                 console.log("Added employee!");
@@ -161,7 +160,7 @@ function addRole() {
     console.log("addRole triggers")
     inquirer.prompt(roleQuestions)
     .then(resp => {
-        db.query('INSERT INTO roles VALUES (?, ?, ?)', [resp.addRole, resp.roleSalary, resp.roleDept],
+        db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)', [resp.addRole, resp.roleSalary, resp.roleDept],
         function (err, result) {
             if (result){
                 console.log("Added role!");
